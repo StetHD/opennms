@@ -28,6 +28,7 @@
 
 package org.opennms.protocols.json.collector;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 import org.opennms.netmgt.collection.api.AttributeGroupType;

@@ -38,8 +38,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sf.json.JSON;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import net.sf.json.JSONSerializer;
+import net.sf.json.util.JSONUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.Pointer;
@@ -190,12 +194,23 @@ public abstract class AbstractJsonCollectionHandler extends AbstractXmlCollectio
             is = c.getInputStream();
             StringWriter writer = new StringWriter();
             IOUtils.copy(is, writer);
-            final JSONObject jsonObject = JSONObject.fromObject(writer.toString());
-            return jsonObject;
+
+            return wrapArray(JSONSerializer.toJSON(writer.toString()));
+
         } finally {
             IOUtils.closeQuietly(is);
             UrlFactory.disconnect(c);
         }
     }
 
+    protected static JSONObject wrapArray(final JSON json) {
+        if (json.isArray()) {
+            final JSONObject wrapper = new JSONObject();
+            wrapper.put("elements", json);
+            return wrapper;
+
+        } else {
+            return (JSONObject) json;
+        }
+    }
 }
